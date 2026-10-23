@@ -1,0 +1,24 @@
+{
+  "name": "FiTNESS YeGEVHA \u2014 Shadow System",
+  "short_name": "YeGEVHA Fitness",
+  "description": "A Solo Leveling-inspired fitness quest system.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#050916",
+  "theme_color": "#071b3b",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

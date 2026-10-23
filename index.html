@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#050916">
+  <meta name="description" content="A Solo Leveling-inspired fitness quest system.">
+  <title>FiTNESS YeGEVHA | Shadow System</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon-512.png" type="image/png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-mark">Y</div>
+      <div><p class="eyebrow">SYSTEM INTERFACE</p><h1>FiTNESS YeGEVHA</h1></div>
+      <button id="settings-open" class="icon-button" aria-label="Open settings">⚙</button>
+    </header>
+
+    <section class="hunter-card panel">
+      <div class="hunter-avatar" id="hunter-avatar">SJ</div>
+      <div class="hunter-info">
+        <p class="eyebrow">HUNTER PROFILE</p>
+        <h2 id="hunter-name">Player</h2>
+        <p id="hunter-character" class="muted">Sung Jin-woo</p>
+      </div>
+      <div class="level-chip"><span>LEVEL</span><strong id="level-value">01</strong></div>
+      <div class="xp-area">
+        <div class="xp-label"><span>EXPERIENCE</span><span id="xp-label">0 XP</span></div>
+        <div class="progress-track"><div id="xp-bar" class="progress-fill"></div></div>
+      </div>
+    </section>
+
+    <section class="stats-grid">
+      <div class="stat panel"><span class="stat-icon">🔥</span><span class="stat-label">STREAK</span><strong id="streak-value">0 / 5</strong><small>consecutive days</small></div>
+      <div class="stat panel"><span class="stat-icon">⚔️</span><span class="stat-label">BOSSES DEFEATED</span><strong id="boss-value">0</strong><small>victories</small></div>
+      <div class="stat panel"><span class="stat-icon">🏃</span><span class="stat-label">TOTAL DISTANCE</span><strong id="distance-value">0.00 km</strong><small>GPS runs</small></div>
+    </section>
+
+    <nav class="tabs" aria-label="App sections">
+      <button class="tab active" data-tab="quests">DAILY QUESTS</button>
+      <button class="tab" data-tab="boss">BOSS GATE</button>
+      <button class="tab" data-tab="profile">HUNTER</button>
+    </nav>
+
+    <main>
+      <section id="tab-quests" class="tab-page">
+        <div class="section-heading"><div><p class="eyebrow">TODAY'S ASSIGNMENT</p><h2>Daily Quests</h2></div><span id="today-date" class="date-pill"></span></div>
+        <div class="quest-summary panel">
+          <div><strong id="quest-count">0 / 11</strong><span>exercises complete</span></div>
+          <div class="summary-xp"><strong id="today-xp">0 / 110 XP</strong><span>daily reward</span></div>
+        </div>
+        <div class="panel workout-launch" id="workout-launch-panel">
+          <p class="eyebrow">AUTOMATED TRAINING</p>
+          <h3>Guided Daily Workout</h3>
+          <p class="muted">11 exercises · 3 sets each · 30-second rest · one rep every 3 seconds.</p>
+          <button id="start-workout" class="primary-button">START WORKOUT</button>
+          <p class="muted small">The workout advances automatically. No skip button. Stop if you feel pain, dizziness, or unwell.</p>
+        </div>
+        <section id="guided-workout" class="panel guided-workout hidden" aria-live="polite">
+          <div class="workout-topline"><span class="eyebrow">SYSTEM TRAINING IN PROGRESS</span><span id="workout-phase" class="phase-pill">READY</span></div>
+          <div class="progress-track workout-progress-track"><div id="workout-progress" class="progress-fill"></div></div>
+          <p id="workout-group" class="eyebrow workout-group">CHEST</p>
+          <h2 id="workout-exercise">Push-ups</h2>
+          <div class="workout-set-row"><div><span class="stat-label">SET</span><strong id="workout-set">1 / 3</strong></div><div><span class="stat-label">REP TARGET</span><strong id="workout-target">5</strong></div></div>
+          <div class="rep-counter"><span id="workout-counter-label">REPS COMPLETED</span><strong id="workout-rep-count">0</strong><small id="workout-countdown">Next rep in 3 seconds</small></div>
+          <div id="workout-rest-panel" class="rest-panel hidden"><span>REST</span><strong id="workout-rest-time">00:30</strong><small>Next set starts automatically</small></div>
+          <p id="workout-message" class="muted workout-message">Get ready.</p>
+          <button id="pause-workout" class="secondary-button">PAUSE TIMER</button>
+          <p class="muted small">No skipping. You can pause for safety and resume when ready.</p>
+        </section>
+        <div id="quest-list"></div>
+        <div class="notice" id="daily-notice">Start the guided workout to complete today's exercises.</div>
+      </section>
+
+      <section id="tab-boss" class="tab-page hidden">
+        <div class="section-heading"><div><p class="eyebrow">GATE STATUS</p><h2>Boss Battle</h2></div><span class="boss-badge">+300 XP</span></div>
+        <div class="panel boss-intro">
+          <div class="gate-symbol">✦</div>
+          <div><h3 id="boss-title">Boss Gate: Stage 1</h3><p id="boss-description" class="muted">Complete five consecutive daily quests to unlock the boss.</p></div>
+        </div>
+        <div id="boss-locked" class="panel locked-card">
+          <div class="lock-icon">🔒</div><h3>Gate sealed</h3><p id="lock-message">Complete your daily quests for five consecutive days.</p>
+          <div class="progress-track"><div id="streak-bar" class="progress-fill"></div></div>
+        </div>
+        <div id="boss-stage-one" class="hidden">
+          <div class="notice warning">Stage 1: complete three times the normal total reps for every exercise at your current level. Rest as needed and use safe form.</div>
+          <div id="boss-workout-list"></div>
+          <button id="complete-strength-boss" class="primary-button" disabled>DEFEAT STRENGTH BOSS</button>
+        </div>
+        <div id="boss-stage-two" class="hidden">
+          <div class="panel run-panel">
+            <p class="eyebrow">STAGE 2 · GPS TRIAL</p>
+            <div class="run-distance"><strong id="run-target">2.0</strong><span>KM REQUIRED</span></div>
+            <p class="muted">Keep this page open while running. GPS and map access require location permission and an internet connection for map tiles.</p>
+            <div class="run-metrics"><div><span>DISTANCE</span><strong id="run-distance">0.00 km</strong></div><div><span>TIME</span><strong id="run-time">00:00</strong></div></div>
+            <div id="run-map" aria-label="GPS route map"></div>
+            <p id="gps-status" class="muted">GPS not started.</p>
+            <div class="button-row"><button id="start-run" class="primary-button">START GPS RUN</button><button id="stop-run" class="secondary-button" disabled>STOP RUN</button></div>
+          </div>
+        </div>
+        <div id="boss-complete" class="panel hidden">
+          <div class="victory-icon">✦</div><h3>Gate Cleared</h3><p id="boss-complete-message">Boss defeated.</p><button id="claim-boss" class="primary-button">CLAIM 300 XP & NEXT LEVEL</button>
+        </div>
+        <div class="panel boss-history"><h3>Boss record</h3><p id="boss-record" class="muted">No bosses defeated yet.</p></div>
+      </section>
+
+      <section id="tab-profile" class="tab-page hidden">
+        <div class="section-heading"><div><p class="eyebrow">HUNTER DATA</p><h2>My Status</h2></div></div>
+        <div class="panel status-window">
+          <p class="eyebrow">STATUS WINDOW</p>
+          <div class="status-row"><span>Hunter</span><strong id="profile-name">Player</strong></div>
+          <div class="status-row"><span>Character</span><strong id="profile-character">Sung Jin-woo</strong></div>
+          <div class="status-row"><span>Level</span><strong id="profile-level">1 / 50</strong></div>
+          <div class="status-row"><span>Total XP</span><strong id="profile-xp">0 XP</strong></div>
+          <div class="status-row"><span>Daily target</span><strong id="profile-target">5 reps × 3 sets</strong></div>
+          <div class="status-row"><span>Current streak</span><strong id="profile-streak">0 days</strong></div>
+          <div class="status-row"><span>Boss wins</span><strong id="profile-bosses">0</strong></div>
+        </div>
+        <div class="panel"><h3>Exercise groups</h3><p class="muted">Chest · Arms · Shoulders · Back · Legs</p><p class="muted">Every exercise starts at 5 reps × 3 sets. Each new level adds 1 rep per set. Level 50 is the cap. Guided workouts count one rep every 3 seconds and use 30-second rests.</p></div>
+        <button id="reset-data" class="danger-button">RESET ALL APP DATA</button>
+      </section>
+    </main>
+    <footer>YOUR SYSTEM. YOUR PROGRESS. <span>v1.0</span></footer>
+  </div>
+
+  <dialog id="settings-dialog">
+    <form method="dialog" id="settings-form">
+      <div class="dialog-heading"><div><p class="eyebrow">SYSTEM SETTINGS</p><h2>Hunter Setup</h2></div><button class="icon-button" value="cancel" aria-label="Close">✕</button></div>
+      <label for="input-name">Hunter name</label>
+      <input id="input-name" maxlength="28" placeholder="Enter your name" required>
+      <label for="input-character">Hunter character</label>
+      <select id="input-character"><option value="Sung Jin-woo">Sung Jin-woo — Male</option><option value="Cha Hae-in">Cha Hae-in — Female</option></select>
+      <p class="muted small">Your progress is saved in this browser on this device. It does not automatically sync to other devices.</p>
+      <button id="save-settings" class="primary-button" value="save">SAVE PROFILE</button>
+    </form>
+  </dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
